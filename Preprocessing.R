@@ -129,3 +129,6 @@ rownames(exprSet_m_vst) <- NULL
 exprSet_m_vst$gene <- as.character(exprSet_m_vst$gene)
 exprSet_m_vst <- exprSet_m_vst[!duplicated(exprSet_m_vst$gene),] ## 17917到17915个gene symbol 
 save(exprSet_m_vst,file = "exprSet_m_vst_17915.Rda")
+
+##
+load("exprSet_m_vst_17915.Rda")
