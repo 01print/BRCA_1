@@ -16,13 +16,23 @@ a <- exprSet_m_vst
 ge <- a$gene
 rownames(a) <- ge
 a <- a[,-1]
-a <- as.data.frame()
-expr_imm <- exprSet_m_vst[rownames(exprSet_m_vst) %in% imm_diff,]  ## 1051到910
-expr_vst_imm_diff <- t(expr_vst_imm_diff)
-expr_vst_imm_diff <- as.data.frame(expr_vst_imm_diff)
-expr_vst_imm <- expr_vst_imm_diff
+a <- as.data.frame(t(a))
+a <- a[,colnames(a) %in% imm]  ## 909
+
+## 
+TCGA_id <- rownames(a)
+table(substring(TCGA_id,14,15)) ## 01/1097 // 11/113
+TCGA_id <- TCGA_id[substring(TCGA_id,14,15)== "01"]
+a <- a[rownames(a) %in% TCGA_id,] ## 1097
+
+## clinical information 
+phen <- read.csv("Pan_cancer_phen.csv")
+BRCA <- subset(phen, phen$cancer.type.abbreviation == "BRCA")
+BRCA <- BRCA[,c(1:7,9,12,24,26,27)]
+BRCA <- BRCA[!duplicated(BRCA$sample),] ## 去除重复值，为0
+save(BRCA, file = "BRCA_clinical.Rda")
 ## import clinical data
-load("LUAD_clinical.Rda")
+
 a <- expr_vst_imm
 TCGA_id <- rownames(a)
 id <- substring(TCGA_id,1,15)
