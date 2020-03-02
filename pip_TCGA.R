@@ -33,30 +33,17 @@ BRCA <- BRCA[!duplicated(BRCA$sample),] ## 去除重复值，为0
 save(BRCA, file = "BRCA_clinical.Rda")
 ## import clinical data
 
-a <- expr_vst_imm
 TCGA_id <- rownames(a)
 id <- substring(TCGA_id,1,15)
 a <- cbind("TCGA_id" = id, a)
 a$TCGA_id <- as.character(a$TCGA_id)
 rownames(a) <- NULL
-names(LUAD_phen)[2] <- "TCGA_id"
-expr_imm_clinic <- merge(a, LUAD_phen,by = "TCGA_id")  ## 511个样本
-expr_imm_clinic <- expr_imm_clinic[!duplicated(expr_imm_clinic$TCGA_id),]  ## 508样本/ 时刻谨记样本名要去除重复值
-## 查看并去除存在正常组织样本
-TCGA_id1 <- expr_imm_clinic$TCGA_id
-table(substring(TCGA_id1,14,15))
-TCGA_id <- TCGA_id1[substring(TCGA_id1,14,15) != "11"]   ## 6个正常组织去掉，剩余502个病灶
-rownames(expr_imm_clinic) <- TCGA_id1
-expr_imm_clinic <- expr_imm_clinic[,-1]
-expr_imm_clinic <- expr_imm_clinic[rownames(expr_imm_clinic) %in% TCGA_id,] ## 对这502个样本进行训练和验证
-
-## 对数据进一步清洗，去除生存时间为NA的,去除生存时间小于30天的
-a <- expr_imm_clinic
-TCGA_id <- rownames(a)
-a <- cbind("TCGA_id" = TCGA_id, a)
-a$TCGA_id <- as.character(a$TCGA_id)
-rownames(a) <- NULL
-## 去除生存时间为NA的行.去除9个，剩余493个
+names(BRCA)[1] <- "TCGA_id"
+a <- merge(a, BRCA,by = "TCGA_id")  ## 1096个样本
+a <- a[!duplicated(a$TCGA_id),]  ## 1090样本/ 时刻谨记样本名要去除重复值
+## 
+a <- subset(a, a$gender == "FEMALE") ## 1078
+## 去除生存时间为NA的行.去除76个，剩余1002个
 a <- a[complete.cases(a$OS.time),] 
 ## 去除生存时间小于30天的样本。从493到479个
 a <- subset(a, a$OS.time > 30) 
