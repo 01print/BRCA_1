@@ -1,7 +1,7 @@
 ###################
 #   TCGA-BRCA
 #   Pancheng Wu
-#   2020-01-15
+#   2020-01-15 / 06-09
 #   PUMC
 ###################
 
@@ -132,5 +132,19 @@ save(exprSet_m_vst,file = "exprSet_m_vst_17915.Rda")
 
 ##
 load("exprSet_m_vst_17915.Rda")
+
+## 06-09， extract the triple negative BRCA
+##
+library(data.table)
+a=fread('TCGA-BRCA.GDC_phenotype.tsv.gz',sep = '\t',header = T)
+colnames(a)
+
+
+table(a$metastatic_breast_carcinoma_progesterone_receptor_status)
+
+library(readr)
+clinical <- read_delim("clinical.csv", "\t", 
+                       escape_double = FALSE, trim_ws = TRUE)
+
 
 
